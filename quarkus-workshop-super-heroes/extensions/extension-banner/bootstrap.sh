@@ -40,7 +40,7 @@ echo "<project xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w
     </dependencyManagement>
 
     <properties>
-        <quarkus.version>1.2.0.Final</quarkus.version>
+        <quarkus.version>1.7.0.Final</quarkus.version>
         <surefire-plugin.version>2.22.0</surefire-plugin.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -49,7 +49,7 @@ echo "<project xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 </project>
-" > pom.xml
+" >pom.xml
 
 echo "<project xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
          xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd'>
@@ -116,7 +116,7 @@ echo "<project xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w
         </plugins>
     </build>
 
-</project>" > deployment/pom.xml
+</project>" >deployment/pom.xml
 
 echo "<project xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
          xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd'>
@@ -175,5 +175,5 @@ echo "<project xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w
             </plugin>
         </plugins>
     </build>
-</project>" > runtime/pom.xml
+</project>" >runtime/pom.xml
 # end::adocSnippet[]

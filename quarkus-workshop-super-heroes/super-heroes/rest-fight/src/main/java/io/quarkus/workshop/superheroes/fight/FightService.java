@@ -8,9 +8,10 @@ import io.quarkus.workshop.superheroes.fight.client.HeroService;
 import io.quarkus.workshop.superheroes.fight.client.Villain;
 // end::adocTransactional[]
 import io.quarkus.workshop.superheroes.fight.client.VillainService;
-import io.smallrye.reactive.messaging.annotations.Channel;
-import io.smallrye.reactive.messaging.annotations.Emitter;
 import org.eclipse.microprofile.faulttolerance.Fallback;
+import org.eclipse.microprofile.faulttolerance.Timeout;
+import org.eclipse.microprofile.reactive.messaging.Channel;
+import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 // tag::adocTransactional[]
 import org.jboss.logging.Logger;
@@ -41,7 +42,8 @@ public class FightService {
     // end::adocRestClient[]
     // tag::adocKafkaEmitter[]
     @Inject
-    @Channel("fights") Emitter<Fight> emitter;
+    @Channel("fights")
+    Emitter<Fight> emitter;
 
     // end::adocKafkaEmitter[]
     private static final Logger LOGGER = Logger.getLogger(FightService.class);
@@ -64,8 +66,7 @@ public class FightService {
         int heroAdjust = random.nextInt(20);
         int villainAdjust = random.nextInt(20);
 
-        if ((fighters.hero.level + heroAdjust)
-            > (fighters.villain.level + villainAdjust)) {
+        if ((fighters.hero.level + heroAdjust) > (fighters.villain.level + villainAdjust)) {
             fight = heroWon(fighters);
         } else if (fighters.hero.level < fighters.villain.level) {
             fight = villainWon(fighters);
@@ -74,7 +75,7 @@ public class FightService {
         }
 
         fight.fightDate = Instant.now();
-        fight.persist(fight);
+        Fight.persist(fight);
         // tag::adocKafka[]
         emitter.send(fight);
         // end::adocKafka[]
@@ -110,6 +111,7 @@ public class FightService {
     }
 
     // tag::adocRestClient[]
+    // @Fallback(fallbackMethod = "fallbackRandomFighters")
     Fighters findRandomFighters() {
         Hero hero = findRandomHero();
         Villain villain = findRandomVillain();
@@ -121,6 +123,7 @@ public class FightService {
 
     // tag::adocFallback[]
     @Fallback(fallbackMethod = "fallbackRandomHero")
+    @Timeout(150)
     // end::adocFallback[]
     Hero findRandomHero() {
         return heroService.findRandomHero();
@@ -128,6 +131,7 @@ public class FightService {
 
     // tag::adocFallback[]
     @Fallback(fallbackMethod = "fallbackRandomVillain")
+    @Timeout(150)
     // end::adocFallback[]
     Villain findRandomVillain() {
         return villainService.findRandomVillain();
@@ -136,6 +140,27 @@ public class FightService {
 
     // tag::adocRestClient[]
     // tag::adocFallback[]
+
+    // public Fighters fallbackRandomFighters() {
+    // LOGGER.warn("Falling back on Hero");
+    // Hero hero = new Hero();
+    // hero.name = "Fallback hero";
+    // hero.picture =
+    // "https://dummyimage.com/280x380/1e8fff/ffffff&text=Fallback+Hero";
+    // hero.powers = "Fallback hero powers";
+    // hero.level = 1;
+    // LOGGER.warn("Falling back on Villain");
+    // Villain villain = new Villain();
+    // villain.name = "Fallback villain";
+    // villain.picture =
+    // "https://dummyimage.com/280x380/b22222/ffffff&text=Fallback+Villain";
+    // villain.powers = "Fallback villain powers";
+    // villain.level = 42;
+    // Fighters fighters = new Fighters();
+    // fighters.hero = hero;
+    // fighters.villain = villain;
+    // return fighters;
+    // }
 
     public Hero fallbackRandomHero() {
         LOGGER.warn("Falling back on Hero");

@@ -1,8 +1,22 @@
 // tag::adocResource[]
 package io.quarkus.workshop.superheroes.fight;
 
-// end::adocResource[]
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
+
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
 import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Counted;
@@ -17,21 +31,6 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.jboss.logging.Logger;
 
-import javax.inject.Inject;
-import javax.validation.Valid;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import java.util.List;
-
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
-
 @Path("/api/fights")
 @Produces(APPLICATION_JSON)
 public class FightResource {
@@ -41,15 +40,6 @@ public class FightResource {
     @Inject
     FightService service;
 
-    // tag::adocFaultTolerance[]
-    // tag::adocTimeout[]
-    @ConfigProperty(name = "process.milliseconds", defaultValue="0")
-    long tooManyMilliseconds;
-
-    private void veryLongProcess() throws InterruptedException {
-        Thread.sleep(tooManyMilliseconds);
-    }
-
     // end::adocTimeout[]
     @Operation(summary = "Returns two random fighters")
     @APIResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON, schema = @Schema(implementation = Fighters.class, required = true)))
@@ -58,16 +48,13 @@ public class FightResource {
     @Timed(name = "timeGetRandomFighters", description = "Times how long it takes to invoke the getRandomFighters method", unit = MetricUnits.MILLISECONDS)
     // end::adocMetrics[]
     // tag::adocTimeout[]
-    @Timeout(250)
+    @Timeout(1000)
     // end::adocTimeout[]
     @GET
     @Path("/randomfighters")
     public Response getRandomFighters() throws InterruptedException {
-        // tag::adocTimeout[]
-        veryLongProcess();
-        // end::adocTimeout[]
         Fighters fighters = service.findRandomFighters();
-        LOGGER.debug("Get random fighters " + fighters);
+        LOGGER.debug("Getting random fighters " + fighters);
         return Response.ok(fighters).build();
     }
     // end::adocFaultTolerance[]
@@ -113,7 +100,9 @@ public class FightResource {
     @Timed(name = "timeFight", description = "Times how long it takes to invoke the createFight method", unit = MetricUnits.MILLISECONDS)
     // end::adocMetrics[]
     @POST
-    public Fight fight(@RequestBody(description = "The two fighters fighting", required = true, content = @Content(mediaType = APPLICATION_JSON, schema = @Schema(implementation = Fighters.class))) @Valid Fighters fighters, @Context UriInfo uriInfo) {
+    public Fight fight(
+            @RequestBody(description = "The two fighters fighting", required = true, content = @Content(mediaType = APPLICATION_JSON, schema = @Schema(implementation = Fighters.class))) @Valid Fighters fighters,
+            @Context UriInfo uriInfo) {
         return service.persistFight(fighters);
     }
 
