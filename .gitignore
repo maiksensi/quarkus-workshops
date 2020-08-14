@@ -32,3 +32,5 @@ node/
 .project
 .classpath
 .settings
+.factorypath
+.vscode/
