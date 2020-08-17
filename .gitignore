@@ -34,3 +34,4 @@ node/
 .settings
 .factorypath
 .vscode/
+*.psd

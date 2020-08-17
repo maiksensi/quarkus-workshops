@@ -1,4 +1,3 @@
-// tag::adocApplication[]
 package io.quarkus.workshop.superheroes.fight;
 
 import org.eclipse.microprofile.openapi.annotations.ExternalDocumentation;
@@ -19,4 +18,3 @@ import javax.ws.rs.core.Application;
                 @Tag(name = "superheroes", description = "Well, superhero fights") })
 public class FightApplication extends Application {
 }
-// end::adocApplication[]

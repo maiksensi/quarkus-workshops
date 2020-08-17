@@ -34,9 +34,8 @@ public class DatabaseConnectionHealthCheck implements HealthCheck {
 
     private int numberOfRows(String table) throws Exception {
         try (Connection connection = dataSource.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM " + table)
-        ) {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM " + table)) {
             if (resultSet.next()) {
                 return resultSet.getInt(1);
             } else {

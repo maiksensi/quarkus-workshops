@@ -29,12 +29,8 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
-
-
 @QuarkusTest
 @QuarkusTestResource(DatabaseResource.class)
-@QuarkusTestResource(KafkaResource.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FightResourceTest {
 
@@ -50,85 +46,57 @@ public class FightResourceTest {
 
     @Test
     void shouldPingOpenAPI() {
-        given()
-            .header(ACCEPT, APPLICATION_JSON)
-            .when().get("/openapi")
-            .then()
-            .statusCode(OK.getStatusCode());
+        given().header(ACCEPT, APPLICATION_JSON).when().get("/openapi").then().statusCode(OK.getStatusCode());
     }
 
     @Test
     void shouldPingSwaggerUI() {
-        given()
-            .when().get("/swagger-ui")
-            .then()
-            .statusCode(OK.getStatusCode());
+        given().when().get("/swagger-ui").then().statusCode(OK.getStatusCode());
     }
 
     // tag::adocHealth[]
     @Test
     void shouldPingLiveness() {
-        given()
-            .when().get("/health/live")
-            .then()
-            .statusCode(OK.getStatusCode());
+        given().when().get("/health/live").then().statusCode(OK.getStatusCode());
     }
 
     @Test
     void shouldPingReadiness() {
-        given()
-            .when().get("/health/ready")
-            .then()
-            .statusCode(OK.getStatusCode());
+        given().when().get("/health/ready").then().statusCode(OK.getStatusCode());
     }
     // end::adocHealth[]
 
     // tag::adocMetrics[]
     @Test
     void shouldPingMetrics() {
-        given()
-            .header(ACCEPT, APPLICATION_JSON)
-            .when().get("/metrics/application")
-            .then()
-            .statusCode(OK.getStatusCode());
+        given().header(ACCEPT, APPLICATION_JSON).when().get("/metrics/application").then()
+                .statusCode(OK.getStatusCode());
     }
     // end::adocMetrics[]
 
     @Test
     public void testHelloEndpoint() {
-        given()
-            .when().get("/api/fights/hello")
-            .then()
-            .statusCode(200)
-            .body(is("hello"));
+        given().when().get("/api/fights/hello").then().statusCode(200).body(is("hello"));
     }
 
     @Test
     void shouldNotGetUnknownFight() {
         Long randomId = new Random().nextLong();
-        given()
-            .pathParam("id", randomId)
-            .when().get("/api/fights/{id}")
-            .then()
-            .statusCode(NO_CONTENT.getStatusCode());
+        given().pathParam("id", randomId).when().get("/api/fights/{id}").then().statusCode(NO_CONTENT.getStatusCode());
     }
 
     // tag::adocRandom[]
 
-    //....
+    // ....
     @Test
     void shouldGetRandomFighters() {
-        given()
-            .when().get("/api/fights/randomfighters")
-            .then()
-            .statusCode(OK.getStatusCode())
-            .header(CONTENT_TYPE, APPLICATION_JSON)
-            .body("hero.name", Is.is(MockHeroService.DEFAULT_HERO_NAME))
-            .body("hero.picture", Is.is(MockHeroService.DEFAULT_HERO_PICTURE))
-            .body("hero.level", Is.is(MockHeroService.DEFAULT_HERO_LEVEL))
-            .body("villain.name", Is.is(MockVillainService.DEFAULT_VILLAIN_NAME))
-            .body("villain.picture", Is.is(MockVillainService.DEFAULT_VILLAIN_PICTURE))
-            .body("villain.level", Is.is(MockVillainService.DEFAULT_VILLAIN_LEVEL));
+        given().when().get("/api/fights/randomfighters").then().statusCode(OK.getStatusCode())
+                .header(CONTENT_TYPE, APPLICATION_JSON).body("hero.name", Is.is(MockHeroService.DEFAULT_HERO_NAME))
+                .body("hero.picture", Is.is(MockHeroService.DEFAULT_HERO_PICTURE))
+                .body("hero.level", Is.is(MockHeroService.DEFAULT_HERO_LEVEL))
+                .body("villain.name", Is.is(MockVillainService.DEFAULT_VILLAIN_NAME))
+                .body("villain.picture", Is.is(MockVillainService.DEFAULT_VILLAIN_PICTURE))
+                .body("villain.level", Is.is(MockVillainService.DEFAULT_VILLAIN_LEVEL));
     }
     // end::adocRandom[]
 
@@ -138,23 +106,15 @@ public class FightResourceTest {
         fighters.hero = null;
         fighters.villain = null;
 
-        given()
-            .body(fighters)
-            .header(CONTENT_TYPE, APPLICATION_JSON)
-            .header(ACCEPT, APPLICATION_JSON)
-            .when()
-            .post("/api/fights")
-            .then()
-            .statusCode(BAD_REQUEST.getStatusCode());
+        given().body(fighters).header(CONTENT_TYPE, APPLICATION_JSON).header(ACCEPT, APPLICATION_JSON).when()
+                .post("/api/fights").then().statusCode(BAD_REQUEST.getStatusCode());
     }
 
     @Test
     @Order(1)
     void shouldGetInitialItems() {
-        List<Fight> fights = get("/api/fights").then()
-            .statusCode(OK.getStatusCode())
-            .header(CONTENT_TYPE, APPLICATION_JSON)
-            .extract().body().as(getFightTypeRef());
+        List<Fight> fights = get("/api/fights").then().statusCode(OK.getStatusCode())
+                .header(CONTENT_TYPE, APPLICATION_JSON).extract().body().as(getFightTypeRef());
         assertEquals(NB_FIGHTS, fights.size());
     }
 
@@ -173,37 +133,20 @@ public class FightResourceTest {
         fighters.hero = hero;
         fighters.villain = villain;
 
-        fightId = given()
-            .body(fighters)
-            .header(CONTENT_TYPE, APPLICATION_JSON)
-            .header(ACCEPT, APPLICATION_JSON)
-            .when()
-            .post("/api/fights")
-            .then()
-            .statusCode(OK.getStatusCode())
-            .body(containsString("winner"), containsString("loser"))
-            .extract().body().jsonPath().getString("id");
+        fightId = given().body(fighters).header(CONTENT_TYPE, APPLICATION_JSON).header(ACCEPT, APPLICATION_JSON).when()
+                .post("/api/fights").then().statusCode(OK.getStatusCode())
+                .body(containsString("winner"), containsString("loser")).extract().body().jsonPath().getString("id");
 
         assertNotNull(fightId);
 
-        given()
-            .pathParam("id", fightId)
-            .when().get("/api/fights/{id}")
-            .then()
-            .statusCode(OK.getStatusCode())
-            .header(CONTENT_TYPE, APPLICATION_JSON)
-            .body("winnerName", Is.is(DEFAULT_WINNER_NAME))
-            .body("winnerPicture", Is.is(DEFAULT_WINNER_PICTURE))
-            .body("winnerLevel", Is.is(DEFAULT_WINNER_LEVEL))
-            .body("loserName", Is.is(DEFAULT_LOSER_NAME))
-            .body("loserPicture", Is.is(DEFAULT_LOSER_PICTURE))
-            .body("loserLevel", Is.is(DEFAULT_LOSER_LEVEL))
-            .body("fightDate", Is.is(notNullValue()));
+        given().pathParam("id", fightId).when().get("/api/fights/{id}").then().statusCode(OK.getStatusCode())
+                .header(CONTENT_TYPE, APPLICATION_JSON).body("winnerName", Is.is(DEFAULT_WINNER_NAME))
+                .body("winnerPicture", Is.is(DEFAULT_WINNER_PICTURE)).body("winnerLevel", Is.is(DEFAULT_WINNER_LEVEL))
+                .body("loserName", Is.is(DEFAULT_LOSER_NAME)).body("loserPicture", Is.is(DEFAULT_LOSER_PICTURE))
+                .body("loserLevel", Is.is(DEFAULT_LOSER_LEVEL)).body("fightDate", Is.is(notNullValue()));
 
-        List<Fight> fights = get("/api/fights").then()
-            .statusCode(OK.getStatusCode())
-            .header(CONTENT_TYPE, APPLICATION_JSON)
-            .extract().body().as(getFightTypeRef());
+        List<Fight> fights = get("/api/fights").then().statusCode(OK.getStatusCode())
+                .header(CONTENT_TYPE, APPLICATION_JSON).extract().body().as(getFightTypeRef());
         assertEquals(NB_FIGHTS + 1, fights.size());
     }
 
