@@ -1,5 +1,12 @@
 version: "3"
 services:
+    frontend:
+        image: "quarkus-workshop-ui"
+        container_name: "quarkus-ui"
+        ports:
+            - "3000:80"
+        depends_on:
+            - fight
     fight:
         image: "quarkus-workshop-fight"
         container_name: "quarkus-fight"

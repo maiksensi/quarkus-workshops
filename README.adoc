@@ -1,139 +1,25 @@
-= Workshop Super Heroes
+= Quarkus Super Heros Workshop Demo
 
-== Instructions
+This fork of https://quarkus.io/quarkus-workshops/super-heros/ is a demo project showing the usage of https://quarkus.io/guides/microprofile-fault-tolerance. It is also used in an article at https://www.informatik-aktuell.de/ about Chaos Engineering.
 
-Check https://quarkus.io/quarkus-workshops/super-heros/ to get the workshop instructions.
+== Setup Instructions
 
-== Generate the documentation
+Checkout the repository via `git clone https://github.com/maiksensi/quarkus-workshops.git`. The `main` branch is the starting point for the demo. If you're interested in the solution then checkout `solution`.
 
-You can either generate the documentation for each exercise or for the entire workshop.
-For that, you just run the Maven command `mvn clean generate-resources` under an `docs` directory.
+You need to have Docker (https://docs.docker.com/get-docker/), `docker-compose` (https://docs.docker.com/compose/install/) and Java 11 (I use https://sdkman.io/ to manage my Java installations) installed.
 
-== Start the infrastructure
+Open a terminal and navigate to your repository root folder.
 
-This workshop requires a couple of extra _technical_ services (databases, kafka...).
-Start them using the `docker-compose.yaml` file located in the `infrastructure` directory:
+=== Start the Infrastructure
+First, we need to generate Docker images of all services. Switch to the `infrastructure` folder.
 
-```
-cd containers
-docker-compose up
-```
+In the `infrastructure` folder run `./build_services.sh` to build all services. This should build all (fight, hero, villain, ui) services.
 
-Stop them using:
+Nexts, start all services via `docker-compose up --build --force-recreate --remove-orphans`. This should start all services. They are reachable via:
 
-```
-CTRL+C
-docker-compose down
-docker-compose rm
-```
+- heroes: http://localhost:8083/ (to browse the API: http://localhost:8083/swagger-ui/)
+- villain: http://localhost:8084/ (to browse the API: http://localhost:8084/swagger-ui/)
+- fight: http://localhost:8082/ (to browse the API: http://localhost:8082/swagger-ui/)
+- fight-ui: http://localhost:3000/
+- prometheus: http://localhost:9090/
 
-== Build
-
-```bash
-mvn clean install
-```
-
-== Running the full system
-
-* Run the infrastructure as explained above.
-* In a new terminal, run the heroes microservice
-```bash
-cd api-hero
-mvn clean compile quarkus:dev
-```
-* In a new terminal, run the villains microservice
-```bash
-cd api-villain
-mvn clean compile quarkus:dev
-```
-* In a new terminal, run the fights microservice
-```bash
-cd api-fight
-mvn clean compile quarkus:dev
-```
-
-== Ports
-
-* heroes microservice -> 8083
-* villains microservice -> 8084
-* fights microservice -> 8082, ui on http://localhost:8082/super-heroes
-* stats microservice -> 8085, ui on http://localhost:8085/
-* Prometheus -> 9090
-
-== References
-
-* https://github.com/cescoffier/quarkus-todo-app
-* https://github.com/agoncal/baking-microservice-pie
-* https://forge.jboss.org/document/hands-on-lab
-* https://bit.ly/forge-hol
-
-== Note for ourselves
-
-We can use http://plantuml.com/en/salt[Salt] to generate an image from a `tree` directory structure.
-We need a few search and replaces, but we can easily go from :
-
-[source,text]
-----
-super-heroes/
-+  infrastructure   All the needed infrastructure (Postgres, Kafka...)
-+  rest-fight       REST API allowing super heroes to fight
-│   └── src
-│       +  main
-│       └── test
-+  rest-hero        REST API for CRUD operations on Heroes
-│   └── src
-│       +  main
-│       └── test
-+  rest-villain     REST API for CRUD operations on Villains
-│   └── src
-│       +  main
-│       └── test
-└── ui-super-heroes  Angular application so we can fight visually
-    └── src
-        +  app
-        └── main
-----
-
-to :
-
-[source,text]
-----
-@startsalt
-{
-{
-T
-+ infrastructure
-+ rest-fight
-++ src
-++ main
-++ test
-+ rest-hero
-++ src
-++ main
-++ test
-+ rest-villain
-++ src
-++ main
-++ test
-+ ui-super-heroes
-+ src
-+ app
-+ main
-}
-}
-@endsalt
-----
-
-Here is the sequence of search&replace to easily go from one format to another one:
-
-[source,text]
-----
-// Change the characters with +
-Replace `/` with ``
-Replace `├──` with `+ `
-Replace `└──` with `+ `
-Replace `│` with ` `
-// Might have some special character (replace it with a blank)
-Replace ' ' with ' '
-Replace `    ` with `+`
-----
