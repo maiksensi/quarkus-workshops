@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.eclipse.microprofile.faulttolerance.Fallback;
-// import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 
@@ -104,13 +103,10 @@ public class FightService {
     }
 
     @Fallback(fallbackMethod = "fallbackRandomHero")
-    // @Timeout(150)
     Hero findRandomHero() {
         return heroService.findRandomHero();
     }
 
-    // @Fallback(fallbackMethod = "fallbackRandomVillain")
-    // @Timeout(150)
     Villain findRandomVillain() {
         return villainService.findRandomVillain();
     }
@@ -123,15 +119,5 @@ public class FightService {
         hero.powers = "Fallback hero powers";
         hero.level = 1;
         return hero;
-    }
-
-    public Villain fallbackRandomVillain() {
-        LOGGER.warn("Falling back on Villain");
-        Villain villain = new Villain();
-        villain.name = "Fallback villain";
-        villain.picture = "https://dummyimage.com/280x380/b22222/ffffff&text=Fallback+Villain";
-        villain.powers = "Fallback villain powers";
-        villain.level = 42;
-        return villain;
     }
 }
