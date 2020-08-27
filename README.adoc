@@ -4,7 +4,7 @@ This fork of https://quarkus.io/quarkus-workshops/super-heros/ is a demo project
 
 == Setup Instructions
 
-Checkout the repository via `git clone https://github.com/maiksensi/quarkus-workshops.git`. The `main` branch is the starting point for the demo. If you're interested in the solution then checkout `solution`.
+Checkout the repository via `git clone https://github.com/maiksensi/quarkus-workshops.git`. The `main` branch is the starting point for the demo. If you're interested in the solution then checkout the `fallback` branch.
 
 You need to have Docker (https://docs.docker.com/get-docker/), `docker-compose` (https://docs.docker.com/compose/install/) and Java 11 (I use https://sdkman.io/ to manage my Java installations) installed.
 
@@ -20,6 +20,10 @@ Nexts, start all services via `docker-compose up --build --force-recreate --remo
 - heroes: http://localhost:8083/ (to browse the API: http://localhost:8083/swagger-ui/)
 - villain: http://localhost:8084/ (to browse the API: http://localhost:8084/swagger-ui/)
 - fight: http://localhost:8082/ (to browse the API: http://localhost:8082/swagger-ui/)
-- fight-ui: http://localhost:3000/
-- prometheus: http://localhost:9090/
+- fight-ui: http://localhost:3000/ (frontend)
+- prometheus: http://localhost:9090/ (monitoring)
 
+
+ == Notes
+
+ Contributions are welcome. Please keep in mind: this a demo project and I didn't put too much efford in error handling in `build_all_services.sh`.
