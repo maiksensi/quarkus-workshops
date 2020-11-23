@@ -7,10 +7,10 @@ Break-Out-Session Teilnehmende, @maiksensi
 localhost
 
 |=================================
-| Heros slow |
+| Heros down |
 
 | Type of attack / Klassifizierung
-| Latenz Attacke
+| Service-Ausfall
 
 | Target
 | hero-service
@@ -30,13 +30,13 @@ a| *Wenn der Hero-Service ausfällt*, dann:
 | Details of Attack
 a|
 * Alle Dienste (Prometheus, Frontend & Backend) sind nach Anleitung in README gestartet: docker-compose up --build --force-recreate --remove-orphans und haben sich 2 Minuten eingependelt
-* hero container killen: docker kill quarkus-hero
+* Pumba: `pumba kill quarkus-hero`
 
 | Rollback
-| Hero Container wieder starten (docker-compose up --build --force-recreate --remove-orphans hero oder docker-compose mit CTRL+C beenden und neu starten (docker-compose up --build --force-recreate --remove-orphans)
+| Hero Container wieder starten (docker-compose up --build --force-recreate --remove-orphans hero oder docker-compose mit `docker-compose down` alle container beenden und neu starten (docker-compose up -d --build --force-recreate --remove-orphans)
 
 | Steady-State
-| Frontend lädt Bösewichte, Kampfliste und Helden weiterhin. Anstelle der Helden wird ein Fallback oder kein Held angezeigt. Es kann gekämpft werden
+| Frontend lädt Bösewichte, Kampfliste und Helden weiterhin. Anstelle der Helden wird ein Fallback oder kein Held angezeigt. Es kann gekämpft werden.
 
 | Planned start - Planned stop
 | 13:20 - 13:25
@@ -48,7 +48,10 @@ a|
 a|
 
 | Findings
-|
+a|
+* Es wird kein Ersatz-Held angezeigt
+* Die UI blockt (bis zum nächsten Refresh), weil kein Held abgerufen werden kann so wird auch kein Bösewicht geladen
+
 
 |=================================
 
