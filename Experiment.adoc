@@ -1,0 +1,54 @@
+= Chaos Engineering Experiment Template
+
+== Teilnehmende
+Break-Out-Session Teilnehmende, @maiksensi
+
+== Umgebung
+localhost
+
+|=================================
+| Heros slow |
+
+| Type of attack / Klassifizierung
+| Latenz Attacke
+
+| Target
+| hero-service
+
+| Hypothesis
+a| *Wenn der Hero-Service ausfällt*, dann:
+
+* sehen Benutzende keine Fehler in der UI http://localhost:3000),
+
+* wird nach einer kurzen Zeit (z. B. Timeout 50 ms) ein Ersatz-Held angezeigt
+
+* zufällige Bösewichte können weiterhin geladen werden.
+         
+| Blast radius
+| Frontend, Fight-Service
+
+| Details of Attack
+a|
+* Alle Dienste (Prometheus, Frontend & Backend) sind nach Anleitung in README gestartet: docker-compose up --build --force-recreate --remove-orphans und haben sich 2 Minuten eingependelt
+* hero container killen: docker kill quarkus-hero
+
+| Rollback
+| Hero Container wieder starten (docker-compose up --build --force-recreate --remove-orphans hero oder docker-compose mit CTRL+C beenden und neu starten (docker-compose up --build --force-recreate --remove-orphans)
+
+| Steady-State
+| Frontend lädt Bösewichte, Kampfliste und Helden weiterhin. Anstelle der Helden wird ein Fallback oder kein Held angezeigt. Es kann gekämpft werden
+
+| Planned start - Planned stop
+| 13:20 - 13:25
+
+| Steady state before
+|
+
+| Steady state during / after
+a|
+
+| Findings
+|
+
+|=================================
+
